@@ -30,3 +30,8 @@ This should return something like:
 
 
 Once you've completed these steps, you're ready to start the workshop!
+
+
+##Setting up the VPC
+
+Once you've signed into your AWS account, navigate to the [ECS console](https://console.aws.amazon.com/ecs/home?region=us-east-1#/clusters).  If you've never used ECS before, you can use the [first run wizard](https://console.aws.amazon.com/ecs/home#/firstRun) which will set up your cluster, a dummy service, and a VPC for you.  If you don't want to use the wizard, you can use the Cloudformation template included in this repo.  
