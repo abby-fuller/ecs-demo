@@ -5,10 +5,10 @@ This workshop introduces the basics of working with [ECS](https://aws.amazon.com
 
 Prior to beginning the workshop, you'll need to complete a few set up steps: 
 
-    [Have a working AWS account](<https://aws.amazon.com>)
-    ![Have a working Github account](<https://www.github.com>)
-    ![Install the AWS CLI](<http://docs.aws.amazon.com/cli/latest/userguide/installing.html>)
-    ![Have Docker installed locally](<https://docs.docker.com/engine/installation/>)
+* [Have a working AWS account](<https://aws.amazon.com>)
+* [Have a working Github account](<https://www.github.com>)
+* [Install the AWS CLI](<http://docs.aws.amazon.com/cli/latest/userguide/installing.html>)
+* [Have Docker installed locally](<https://docs.docker.com/engine/installation/>)
 
 To check if you have the AWS CLI installed:
 
@@ -167,8 +167,8 @@ To test the api container, repeat the same process from the `/api` directory:
 
     $ cd <path/to/project/ecs-demo/api 
     $ docker build -t ecs-demo-api .
-    $ docker run -d -p 5000:5000 ecs-demo-api
-    $ curl localhost:5000/api
+    $ docker run -d -p 8000:8000 ecs-demo-api
+    $ curl localhost:8000/api
 
 The API container should return:
 
@@ -187,7 +187,7 @@ To tag and push the web repository:
 
 This should return something like this:
 
-    docker push 621169296726.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
+    docker push <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
     The push refers to a repository [<account_id>.ecr.us-east-1.amazonaws.com/ecs-demo-web] (len: 1)
     ec59b8b825de: Image already exists 
     5158f10ac216: Image successfully pushed 
@@ -245,5 +245,41 @@ Choose the security group, and continue to the next step:  adding routing.  For 
 
 ![add routing](https://github.com/abby-fuller/ecs-demo/blob/master/images/configure_alb_routing.png)
 
-Finally, 
+Finally, skip the "Register targets" step, and continue to review. If your values look correct, click **Create**.
+
+Note:  If you created your own security group, and only added a rule for port 80, you'll need to add one more.  Select your security group from the list > **Inbound** > **Edit** and add a rule to allow your ALB to access the port range for ECS (0-65535).  The final rules should look like:
+
+     Type        Ports        Protocol        Source	
+     HTTP          80	        tcp	         0.0.0.0/0
+     All TCP      0-65535       tcp       <id of this security group>
+     
+
+##Create your Task Definitions
+
+Before you can register a container to a service, it needs be a part of a Task Definition. Task Definitions define things like environment variables, the container image you wish to use, and the resources you want to allocate to the service (port, memory, CPU).  To create a Task Definition, choose **Task Definitions** from the ECS console menu.  Then, choose **Create a Task Definition**:
+
+![create task def](https://github.com/abby-fuller/ecs-demo/blob/master/images/create_task_def.png)
+
+At this point, you'll have the opportunity to **Create an Amazon EC2 Container Service Role in the IAM Console**.  Follow the link to create the role:
+
+![create service role](https://github.com/abby-fuller/ecs-demo/blob/master/images/service_role.png)
+
+Once you've created the role, you can refresh the Role list in the Task Definition creation wizard.  It should now appear in the dropdown.  Select your role, and continue to adding a container definition.  
+
+![container def](https://github.com/abby-fuller/ecs-demo/blob/master/images/container_def.png)
+
+A few things to note here:
+
+- We've specified a specific container image, including the `:latest` tag.  Although it's not important for this demo, in a production environment where you were creating Task Definitions programmatically from a CI/CD pipeline, Task Definitions could include a specific SHA, or a more accurate tag.
+
+- Under **Port Mappings**, we've specified a **Container Port** (3000), but left **Host Port** as 0.  This was intentional, and is used to faciliate dynamic port allocation.  This means that we don't need to map the Container Port to a specific Host Port in our Container Definition-  instead, we can let the ALB allocate a port during task placement.  To learn more about port allocation, check out the [ECS documentation here](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html).
+
+
+Repeat the Task Definition creation process with the API container, taking care to use the correct port (8000) for the **Container Port** option.
+
+##Create your Services
+
+Navigate back to the ECS console, and choose the cluster that you created during the first run wizard.  This should be named **ecs-demo**.  If you don't have a cluster named **ecs-demo**, create one with the **Create Cluster** option.
+
+
 
