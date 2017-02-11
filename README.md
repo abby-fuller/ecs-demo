@@ -1,6 +1,6 @@
 # Getting started with ECS
 
-Quick jump:
+**Quick jump:**
 
 * [Workshop overview](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#overview-of-workshop)
 * [Setting up the VPC](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#setting-up-the-vpc)
