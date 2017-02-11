@@ -312,3 +312,15 @@ Repeat this process for the API container and task definition.
 
 ##Testing our service deployments from the console and the ALB
 
+You can see service level events from the ECS console.  This includes deployment events. You can test that both of your services deployed, and registered properly with the ALB by looking at the service's **Events** tab:
+
+![deployment event](https://github.com/abby-fuller/ecs-demo/blob/master/images/steady_state_service.png)
+
+We can also test from the ALB itself.  To find the DNS A record for your ALB, navigate to the EC2 Console > **Load Balancers** > **Select your Load Balancer**.  Under **Description**, you can find details about your ALB, including a section for **DNS Name**.  You can enter this value in your browser, and append the endpoint of your service, to see your ALB and ECS Cluster in action:
+
+![alb test](https://github.com/abby-fuller/ecs-demo/blob/master/images/alb_web_response.png)
+
+
+
+
+
