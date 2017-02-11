@@ -66,15 +66,58 @@ If you've never configured the AWS CLI, the easiest way is by running:
 
 This should drop you into a setup wizard:
 
-    ```
     vagrant@vagrant:~/.aws$ aws configure
     AWS Access Key ID [****************K2JA]: 
     AWS Secret Access Key [****************Oqx+]: 
     Default region name [us-east-1]: 
     Default output format [json]: 
-    ```
 
 If you already have a profile setup with the AWS CLI, you can also add a new profile to your credentials file.
 
-##
+You can test that your IAM user has the correct permissions, and that your CLI is setup to connect to your AWS account by running the command to obtain an ECR authentication token.  This will allow us to pull our registries in the next step:
+
+    $ aws ecr get-login --region us-east-1
+
+This should output something like:
+
+    $ docker login -u AWS -p AQECAHhwm0YaISJeRtJm5n1G6uqeekXuoXXPe5UFce9Rq8/14wAAAy0wggMpBgkqhkiG9w0BBwagggMaMIIDFgIBADCCAw8GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+76slnFaYrrZwLJyAgEQgIIC4LJKIDmvEDtJyr7jO661//6sX6cb2jeD/RP0IA03wh62YxFKqwRMk8gjOAc89ICxlNxQ6+cvwjewi+8/W+9xbv5+PPWfwGSAXQJSHx3IWfrbca4WSLXQf2BDq0CTtDc0+payiDdsXdR8gzvyM7YWIcKzgcRVjOjjoLJpXemQ9liPWe4HKp+D57zCcBvgUk131xCiwPzbmGTZ+xtE1GPK0tgNH3t9N5+XA2BYYhXQzkTGISVGGL6Wo1tiERz+WA2aRKE+Sb+FQ7YDDRDtOGj4MwZ3/uMnOZDcwu3uUfrURXdJVddTEdS3jfo3d7yVWhmXPet+3qwkISstIxG+V6IIzQyhtq3BXW/I7pwZB9ln/mDNlJVRh9Ps2jqoXUXg/j/shZxBPm33LV+MvUqiEBhkXa9cz3AaqIpc2gXyXYN3xgJUV7OupLVq2wrGQZWPVoBvHPwrt/DKsNs28oJ67L4kTiRoufye1KjZQAi3FIPtMLcUGjFf+ytxzEPuTvUk4Xfoc4A29qp9v2j98090Qx0CHD4ZKyj7bIL53jSpeeFDh9EXubeqp6idIwG9SpIL9AJfKxY7essZdk/0i/e4C+481XIM/IjiVkh/ZsJzuAPDIpa8fPRa5Gc8i9h0bioSHgYIpMlRkVmaAqH/Fmk+K00yG8USOAYtP6BmsFUvkBqmRtCJ/Sj+MHs+BrSP7VqPbO1ppTWZ6avl43DM0blG6W9uIxKC9SKBAqvPwr/CKz2LrOhyqn1WgtTXzaLFEd3ybilqhrcNtS16I5SFVI2ihmNbP3RRjmBeA6/QbreQsewQOfSk1u35YmwFxloqH3w/lPQrY1OD+kySrlGvXA3wupq6qlphGLEWeMC6CEQQKSiWbbQnLdFJazuwRUjSQlRvHDbe7XQTXdMzBZoBcC1Y99Kk4/nKprty2IeBvxPg+NRzg+1e0lkkqUu31oZ/AgdUcD8Db3qFjhXz4QhIZMGFogiJcmo= -e none https://<account_id>.dkr.ecr.us-east-1.amazonaws.com
+ 
+To login to ECR, copy and paste that output.  That should return something like:
+
+    WARNING: login credentials saved in /home/vagrant/.dockercfg.
+    Login Succeeded
+
+Note:  if you are running Ubuntu, it is possible that you will need to preface your Docker commands with `sudo`.  For more information on this, see the [Docker documentation](https://docs.docker.com/engine/installation/linux/ubuntu/).
+
+If you are unable to login to ECR, check your IAM user group permissions.
+
+
+##Creating the container registries with ECR
+
+Before we can build and push our images, we need somewhere to push them to.  In this case, we're going to create two repositories in [ECR](https://aws.amazon.com/ecr/).
+
+To create a repository, navigate to the ECS console, and select **Repositories**.  From there, choose **Create repository**.
+
+Name your first repository **ecs-demo-web**:
+
+![create ecr repository](https://github.com/abby-fuller/ecs-demo/blob/master/images/ECR_repo_setup.png)
+
+Once you've created the repository, it will display the push commands.  Take note of these, as you'll need them in the next step.  The push commands should like something like this:
+
+![push commands](https://github.com/abby-fuller/ecs-demo/blob/master/images/push_commands.png)
+
+Once you've created the ecs-demo-web, repeat the process for a second repository.  This one should be named **ecs-demo-api**.  Take note of the push commands for this second repository, also.  Push commands are unique per repository.
+
+
+##Prepping our Docker images
+
+If you haven't already, pull this repository:
+
+    $ git pull git@github.com:abby-fuller/ecs-demo.git
+
+Our first step is the build and test our containers locally.  If you've never worked with Docker before, there are a few basic commands that we'll use in this workshop:
+
+To pull an image from a registry:
+
+    $ sudo docker pull <registry>
 
