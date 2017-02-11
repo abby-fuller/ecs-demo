@@ -44,8 +44,37 @@ Running the Cloudformation template or the first run wizard should result in som
 
 In order to work with the AWS CLI, you'll need an IAM role with the proper permissions set up.  To do this, we'll create both an IAM Group, and an IAM user.
 
-To create the group, naviate to the IAM console, and select "Groups" from the left-hand menu, and then "Create New Group".  Name the group "ecs-demo".  From the list of managed policies, add the following policies:
+To create the group, naviate to the IAM console, and select **Groups** > **Create New Group**.  Name the group "**ecs-demo**".  From the list of managed policies, add the following policies:
 
 ![add IAM group](https://github.com/abby-fuller/ecs-demo/blob/master/images/ecs_demo_iam_role.png)
 
-Once you've created your group, you need to attach it to a user.  If you already have an existing user, you can add it 
+Once you've created your group, you need to attach it to a user.  If you already have an existing user, you can add it to the ecs-group.  If you don't have a user, or need to create a new one, you can do so by going to **Users** > **Add User**:
+
+![add new user](https://github.com/abby-fuller/ecs-demo/blob/master/images/new_iam_user.png)
+
+Name your user something like "**ecs-demo-user**".  From the next step in the wizard, add your user to the "**ecs-demo**" group that we created in the previous step:
+
+![add user to group](https://github.com/abby-fuller/ecs-demo/blob/master/images/add_user_iam_group.png)
+
+When the wizard finishes, make sure to copy or download your access key and secret key.  You'll need them in the next step.
+
+##Configuring the AWS CLI
+
+If you've never configured the AWS CLI, the easiest way is by running:
+
+    $ aws configure
+
+This should drop you into a setup wizard:
+
+    ```
+    vagrant@vagrant:~/.aws$ aws configure
+    AWS Access Key ID [****************K2JA]: 
+    AWS Secret Access Key [****************Oqx+]: 
+    Default region name [us-east-1]: 
+    Default output format [json]: 
+    ```
+
+If you already have a profile setup with the AWS CLI, you can also add a new profile to your credentials file.
+
+##
+
