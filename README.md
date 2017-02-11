@@ -115,9 +115,65 @@ If you haven't already, pull this repository:
 
     $ git pull git@github.com:abby-fuller/ecs-demo.git
 
-Our first step is the build and test our containers locally.  If you've never worked with Docker before, there are a few basic commands that we'll use in this workshop:
+Our first step is the build and test our containers locally.  If you've never worked with Docker before, there are a few basic commands that we'll use in this workshop, but you can find a more thorough list in the [Docker "Getting Started" documentation](https://docs.docker.com/engine/getstarted/).
 
-To pull an image from a registry:
+To start your first container, go to the `web` directory in the project:
 
-    $ sudo docker pull <registry>
+    $ cd <path/to/project/ecs-demo/web
+
+To build the container:
+
+    $ docker build -t ecs-demo-web .
+
+This should output steps that look something like this:
+
+    vagrant@vagrant:/vagrant/web$ docker build -t ecs-demo-web .
+    Sending build context to Docker daemon 4.096 kB
+    Sending build context to Docker daemon 
+    Step 0 : FROM ubuntu:latest
+     ---> 6aa0b6d7eb90
+    Step 1 : MAINTAINER abbyfull@amazon.com
+     ---> Using cache
+     ---> 3f2b91d4e7a9
+  
+If the container builds successfully, the output should end with something like this:
+ 
+     Removing intermediate container d2cd523c946a
+     Successfully built ec59b8b825de
+ 
+To run your container:
+ 
+     $  docker run -d -p 3000:3000 ecs-demo-web
+     
+To check if your container is running:
+ 
+     $ docker ps 
+
+This should return a list of all the currently running containers.  In this example,  it should just return a single container, the one that we just started:
+
+    CONTAINER ID        IMAGE                 COMMAND             CREATED              STATUS              PORTS                              NAMES
+    fa922a2376d5        ecs-demo-web:latest   "python app.py"     About a minute ago   Up About a minute   3000/tcp,    0.0.0.0:3000->3000/tcp   clever_shockley   
+  
+To test the actual container output:
+ 
+     $ curl localhost:3000/web
+     
+This should return:
+
+     hi!  i'm served via Python + Flask.  i'm a web endpoint.
+ 
+
+To test the api container, repeat the same process from the `/api` directory:
+
+    $ cd <path/to/project/ecs-demo/api 
+    $ docker build -t ecs-demo-api .
+    $ docker run -d -p 5000:5000 ecs-demo-api
+    $ curl localhost:5000/api
+
+The API container should return:
+
+    hi!  i'm ALSO served via Python + Flask.  i'm a second web endpoint.
+
+
+##Pushing our tested images to ECR   
 
