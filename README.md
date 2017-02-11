@@ -5,10 +5,10 @@ This workshop introduces the basics of working with [ECS](https://aws.amazon.com
 
 Prior to beginning the workshop, you'll need to complete a few set up steps: 
 
-    [Have a working AWS account](<https://aws.amazon.com>)
-    ![Have a working Github account](<https://www.github.com>)
-    ![Install the AWS CLI](<http://docs.aws.amazon.com/cli/latest/userguide/installing.html>)
-    ![Have Docker installed locally](<https://docs.docker.com/engine/installation/>)
+* [Have a working AWS account](<https://aws.amazon.com>)
+* [Have a working Github account](<https://www.github.com>)
+* [Install the AWS CLI](<http://docs.aws.amazon.com/cli/latest/userguide/installing.html>)
+* [Have Docker installed locally](<https://docs.docker.com/engine/installation/>)
 
 To check if you have the AWS CLI installed:
 
