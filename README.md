@@ -167,8 +167,8 @@ To test the api container, repeat the same process from the `/api` directory:
 
     $ cd <path/to/project/ecs-demo/api 
     $ docker build -t ecs-demo-api .
-    $ docker run -d -p 5000:5000 ecs-demo-api
-    $ curl localhost:5000/api
+    $ docker run -d -p 8000:8000 ecs-demo-api
+    $ curl localhost:8000/api
 
 The API container should return:
 
@@ -187,7 +187,7 @@ To tag and push the web repository:
 
 This should return something like this:
 
-    docker push 621169296726.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
+    docker push <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
     The push refers to a repository [<account_id>.ecr.us-east-1.amazonaws.com/ecs-demo-web] (len: 1)
     ec59b8b825de: Image already exists 
     5158f10ac216: Image successfully pushed 
@@ -247,6 +247,13 @@ Choose the security group, and continue to the next step:  adding routing.  For 
 
 Finally, skip the "Register targets" step, and continue to review. If your values look correct, click **Create**.
 
+Note:  If you created your own security group, and only added a rule for port 80, you'll need to add one more.  Select your security group from the list > **Inbound** > **Edit** and add a rule to allow your ALB to access the port range for ECS (0-65535).  The final rules should look like:
+
+     Type        Ports        Protocol        Source	
+     HTTP          80	        tcp	         0.0.0.0/0
+     All TCP      0-65535       tcp       <id of this security group>
+     
+
 ##Create your Task Definitions
 
 Before you can register a container to a service, it needs be a part of a Task Definition. Task Definitions define things like environment variables, the container image you wish to use, and the resources you want to allocate to the service (port, memory, CPU).  To create a Task Definition, choose **Task Definitions** from the ECS console menu.  Then, choose **Create a Task Definition**:
@@ -268,8 +275,7 @@ A few things to note here:
 - Under **Port Mappings**, we've specified a **Container Port** (3000), but left **Host Port** as 0.  This was intentional, and is used to faciliate dynamic port allocation.  This means that we don't need to map the Container Port to a specific Host Port in our Container Definition-  instead, we can let the ALB allocate a port during task placement.  To learn more about port allocation, check out the [ECS documentation here](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html).
 
 
-
-
+Repeat the Task Definition creation process with the API container, taking care to use the correct port (8000) for the **Container Port** option.
 
 ##Create your Services
 
