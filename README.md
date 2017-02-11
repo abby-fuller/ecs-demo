@@ -175,5 +175,75 @@ The API container should return:
     hi!  i'm ALSO served via Python + Flask.  i'm a second web endpoint.
 
 
-##Pushing our tested images to ECR   
+##Pushing our tested images to ECR
+
+Now that we've tested our images locally, we need to tag them again, and push them to ECR.  This will allow us to use them in TaskDefinitions that can be deployed to an ECS cluster.  
+
+You'll need your push commands that you saw during registry creation.  If you've misplaced your push commands, you can find them again by going back to the repository (**ECS Console** > **Repositories** > Select the Repository you want to see the commands for > **View Push Commands**.
+
+To tag and push the web repository:
+
+    $ docker tag ecs-demo-web:latest <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
+
+This should return something like this:
+
+    docker push 621169296726.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
+    The push refers to a repository [<account_id>.ecr.us-east-1.amazonaws.com/ecs-demo-web] (len: 1)
+    ec59b8b825de: Image already exists 
+    5158f10ac216: Image successfully pushed 
+    860a4e60cdf8: Image successfully pushed 
+    6fb890c93921: Image successfully pushed 
+
+    aa78cde6a49b: Image successfully pushed 
+    Digest: sha256:fa0601417fff4c3f3e067daa7e533fbed479c95e40ee96a24b3d63b24938cba8
+
+To tag and push the api repository:
+
+    $ docker tag ecs-demo-api:latest <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-api:latest
+
+
+Note: why `:latest`?  This is the actual image tag.  In most production environments, you'd tag images for different schemes:  for example, you might tag the most up-to-date image with `:latest`, and all other versions of the same container with a commit SHA from a CI job.  If you push an image without a specific tag, it will default to `:latest`, and untag the previous image with that tag.  For more information on Docker tags, see the Docker [documentation](https://docs.docker.com/engine/getstarted/step_six/). 
+
+You can see your pushed images by viewing the repository in the AWS Console.  Alternatively, you can use the CLI:
+
+    $ aws ecr list-images --repository-name=ecs-demo-api
+    {
+        "imageIds": [
+            {
+                "imageTag": "latest", 
+                "imageDigest": "sha256:f0819d27f73c7fa6329644efe8110644e23c248f2f3a9445cbbb6c84a01e108f"
+            }  
+        ]
+    }
+
+##Creating the ALB
+
+Now that we've pushed our images, we need an Application Load Balancer (ALB)[https://aws.amazon.com/elasticloadbalancing/applicationloadbalancer/] to route traffic to our endpoints. Compared to a traditional load balancer, an ALB lets you direct traffic between different endpoints.  In our example, we'll use two separate endpoints:  `/web` and `/api`.
+
+To create the ALB:
+
+Navigate to the **EC2 Service Console**, and select **Load Balancers** from the left-hand menu.  Choose **Create Load Balancer**:
+
+![choose ALB](https://github.com/abby-fuller/ecs-demo/blob/master/images/choose_ALB.png)
+
+Name your ALB **ecs-demo** and add an HTTP listener on port 80:
+
+![name ALB](https://github.com/abby-fuller/ecs-demo/blob/master/images/create_alb.png)
+
+Note:  in a production environment, you should also have a secure listener on port 443.  This will require an SSL certificate, which can be obtained from [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/), or from your registrar/any CA.  For the purposes of this demo, we will only create the insecure HTTP listener.  DO NOT RUN THIS IN PRODUCTION.
+
+Next, select your VPC and add at least two subnets for high availability.  Make sure to choose the VPC that we created during the ECS first-run wizard (or with the Cloudformation template).  If you have multiple VPC, and you're not sure which VPC is the correct one, you can find its ID from the VPC console, or by viewing the outputs of the Cloudformation stack.
+
+![add VPC](https://github.com/abby-fuller/ecs-demo/blob/master/images/configure_elb.png)
+
+Next, add a security group.  If you ran the ECS first run wizard, you should have an existing group called something like **EC2ContainerService-ecs-demo-EcsSecurityGroup**.  If you don't have this, check you've chosen the correct VPC, as security groups are VPC specific.  If you still don't have this, you can create a new security groups with the following rule:
+
+    Ports	    Protocol	    Source	
+     80	          tcp	       0.0.0.0/0	
+
+Choose the security group, and continue to the next step:  adding routing.  For this initial setup, we're just adding a dummy healthcheck on `/`.  We'll add specific healthchecks for our service endpoints when we register them with the ALB.
+
+![add routing](https://github.com/abby-fuller/ecs-demo/blob/master/images/configure_alb_routing.png)
+
+Finally, 
 
