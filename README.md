@@ -245,5 +245,35 @@ Choose the security group, and continue to the next step:  adding routing.  For 
 
 ![add routing](https://github.com/abby-fuller/ecs-demo/blob/master/images/configure_alb_routing.png)
 
-Finally, 
+Finally, skip the "Register targets" step, and continue to review. If your values look correct, click **Create**.
+
+##Create your Task Definitions
+
+Before you can register a container to a service, it needs be a part of a Task Definition. Task Definitions define things like environment variables, the container image you wish to use, and the resources you want to allocate to the service (port, memory, CPU).  To create a Task Definition, choose **Task Definitions** from the ECS console menu.  Then, choose **Create a Task Definition**:
+
+![create task def](https://github.com/abby-fuller/ecs-demo/blob/master/images/create_task_def.png)
+
+At this point, you'll have the opportunity to **Create an Amazon EC2 Container Service Role in the IAM Console**.  Follow the link to create the role:
+
+![create service role](https://github.com/abby-fuller/ecs-demo/blob/master/images/service_role.png)
+
+Once you've created the role, you can refresh the Role list in the Task Definition creation wizard.  It should now appear in the dropdown.  Select your role, and continue to adding a container definition.  
+
+![container def](https://github.com/abby-fuller/ecs-demo/blob/master/images/container_def.png)
+
+A few things to note here:
+
+- We've specified a specific container image, including the `:latest` tag.  Although it's not important for this demo, in a production environment where you were creating Task Definitions programmatically from a CI/CD pipeline, Task Definitions could include a specific SHA, or a more accurate tag.
+
+- Under **Port Mappings**, we've specified a **Container Port** (3000), but left **Host Port** as 0.  This was intentional, and is used to faciliate dynamic port allocation.  This means that we don't need to map the Container Port to a specific Host Port in our Container Definition-  instead, we can let the ALB allocate a port during task placement.  To learn more about port allocation, check out the [ECS documentation here](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html).
+
+
+
+
+
+##Create your Services
+
+Navigate back to the ECS console, and choose the cluster that you created during the first run wizard.  This should be named **ecs-demo**.  If you don't have a cluster named **ecs-demo**, create one with the **Create Cluster** option.
+
+
 
