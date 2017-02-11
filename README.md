@@ -1,5 +1,21 @@
 # Getting started with ECS
 
+Quick jump:
+
+* [Workshop overview](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#overview-of-workshop)
+* [Setting up the VPC](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#setting-up-the-vpc)
+* [Setting up the IAM Roles](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#setting-up-your-iam-roles)
+* [Configuring the AWS CLI](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#configuring-the-aws-cli)
+* [Creating the Container registries with ECR](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#creating-the-container-registries-with-ecr)
+* [Prepping our Docker Images](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#prepping-our-docker-images)
+* [Pushing our tested images to ECR](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#pushing-our-tested-images-to-ecr)
+* [Creating the ALB](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#creating-the-alb)
+* [Creating the Task Definitions](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#create-your-task-definitions)
+* [Create your Services](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#create-your-services)
+* [Testing our Service deployments from the Console and ALB](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#testing-our-service-deployments-from-the-console-and-the-alb)
+* [More in-depth logging with Cloudwatch](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#more-in-depth-logging-with-cloudwatch)
+
+
 ##Overview of workshop##
 This workshop introduces the basics of working with [ECS](https://aws.amazon.com/ecs/).  This includes:  setting up the initial ECS cluster, and deploying two services, with traffic routed through an [ALB](https://aws.amazon.com/elasticloadbalancing/applicationloadbalancer/).
 
