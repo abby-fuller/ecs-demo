@@ -274,12 +274,41 @@ A few things to note here:
 
 - Under **Port Mappings**, we've specified a **Container Port** (3000), but left **Host Port** as 0.  This was intentional, and is used to faciliate dynamic port allocation.  This means that we don't need to map the Container Port to a specific Host Port in our Container Definition-  instead, we can let the ALB allocate a port during task placement.  To learn more about port allocation, check out the [ECS documentation here](http://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html).
 
+Once you've specified your Port Mappings, scroll down and add a log driver.  There are a few options here, but for this demo, choose **awslogs**:
 
-Repeat the Task Definition creation process with the API container, taking care to use the correct port (8000) for the **Container Port** option.
+![aws log driver](https://github.com/abby-fuller/ecs-demo/blob/master/images/setup_logdriver.png)
+
+For the web container, make sure the **awslogs-stream-prefix** is **web**.
+
+Once you've added your log driver, save the Container Definition, and create the Task Definition. 
+
+Repeat the Task Definition creation process with the API container, taking care to use the api container image registry, and the correct port (8000) for the **Container Port** option.  For the log driver, make sure the **awslogs-stream-prefix** is **api**.
 
 ##Create your Services
 
 Navigate back to the ECS console, and choose the cluster that you created during the first run wizard.  This should be named **ecs-demo**.  If you don't have a cluster named **ecs-demo**, create one with the **Create Cluster** option.
 
+Next, you'll need to create your web service.  From the cluster detail page, choose **Services** > **Create**.
 
+![create service](https://github.com/abby-fuller/ecs-demo/blob/master/images/create_service.png)
+
+Choose the web Task Definition you created in the previous section.  For the purposes of this demo, we'll only start one copy of each task.  In a production environment, you will always want more than one copy of each task running for reliability and availability.
+
+You can keep the default **AZ Balanced Spread** for the Task Placement Policy.  To learn more about the different Task Placement Policies, see the [documentation](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-strategies.html), or this [blog post](https://aws.amazon.com/blogs/compute/introducing-amazon-ecs-task-placement-policies/).
+
+Under **Optional Configurations**, choose **Configure ELB**:
+
+![choose container to add to elb](https://github.com/abby-fuller/ecs-demo/blob/master/images/select_container_and_role.png)
+
+Select the web container, choose **Add to ELB**.  
+
+![add to ALB](https://github.com/abby-fuller/ecs-demo/blob/master/images/add_container_to_alb.png)
+
+This final step allows you to configure the container with the ALB.  When we created our ALB, we only added a listener for HTTP:80.  Select this from the dropdown as the value for **Listener**.  For **Target Group Name**, enter a value that will make sense to you later, like **ecs-demo-web**.  For **Path Pattern**, the value should be **`/web*`**.  This is the route that we specified in our Python application.
+
+If the values look correct, click **Save** to add your Container.  '
+
+Repeat this process for the API container and task definition.  
+
+##Testing our service deployments from the console and the ALB
 
