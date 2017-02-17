@@ -26,14 +26,14 @@ Prior to beginning the workshop, you'll need to complete a few set up steps:
 * [Install the AWS CLI](<http://docs.aws.amazon.com/cli/latest/userguide/installing.html>)
 * [Have Docker installed locally](<https://docs.docker.com/engine/installation/>)
 
-To check if you have the AWS CLI installed:
+To check if you have the AWS CLI installed and configured:
 
-    $ aws cli
+    $ aws --version
     
 This should return something like:
 
-    ➜  ecs-demo git:(master) ✗ aws cli
-    usage: aws [options] <command> <subcommand> [<subcommand> ...] [parameters]
+    $ aws --version
+    aws-cli/1.11.36 Python/2.7.13 Darwin/16.4.0 botocore/1.4.93
 
 To check if you have Docker installed:
 
@@ -41,7 +41,7 @@ To check if you have Docker installed:
 
 This should return something like:
 
-    $ vagrant@vagrant:/vagrant$ which docker
+    $ which docker
     /usr/bin/docker
 
 
@@ -82,7 +82,7 @@ If you've never configured the AWS CLI, the easiest way is by running:
 
 This should drop you into a setup wizard:
 
-    vagrant@vagrant:~/.aws$ aws configure
+    $ aws configure
     AWS Access Key ID [****************K2JA]: 
     AWS Secret Access Key [****************Oqx+]: 
     Default region name [us-east-1]: 
@@ -98,7 +98,7 @@ This should output something like:
 
     $ docker login -u AWS -p AQECAHhwm0YaISJeRtJm5n1G6uqeekXuoXXPe5UFce9Rq8/14wAAAy0wggMpBgkqhkiG9w0BBwagggMaMIIDFgIBADCCAw8GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+76slnFaYrrZwLJyAgEQgIIC4LJKIDmvEDtJyr7jO661//6sX6cb2jeD/RP0IA03wh62YxFKqwRMk8gjOAc89ICxlNxQ6+cvwjewi+8/W+9xbv5+PPWfwGSAXQJSHx3IWfrbca4WSLXQf2BDq0CTtDc0+payiDdsXdR8gzvyM7YWIcKzgcRVjOjjoLJpXemQ9liPWe4HKp+D57zCcBvgUk131xCiwPzbmGTZ+xtE1GPK0tgNH3t9N5+XA2BYYhXQzkTGISVGGL6Wo1tiERz+WA2aRKE+Sb+FQ7YDDRDtOGj4MwZ3/uMnOZDcwu3uUfrURXdJVddTEdS3jfo3d7yVWhmXPet+3qwkISstIxG+V6IIzQyhtq3BXW/I7pwZB9ln/mDNlJVRh9Ps2jqoXUXg/j/shZxBPm33LV+MvUqiEBhkXa9cz3AaqIpc2gXyXYN3xgJUV7OupLVq2wrGQZWPVoBvHPwrt/DKsNs28oJ67L4kTiRoufye1KjZQAi3FIPtMLcUGjFf+ytxzEPuTvUk4Xfoc4A29qp9v2j98090Qx0CHD4ZKyj7bIL53jSpeeFDh9EXubeqp6idIwG9SpIL9AJfKxY7essZdk/0i/e4C+481XIM/IjiVkh/ZsJzuAPDIpa8fPRa5Gc8i9h0bioSHgYIpMlRkVmaAqH/Fmk+K00yG8USOAYtP6BmsFUvkBqmRtCJ/Sj+MHs+BrSP7VqPbO1ppTWZ6avl43DM0blG6W9uIxKC9SKBAqvPwr/CKz2LrOhyqn1WgtTXzaLFEd3ybilqhrcNtS16I5SFVI2ihmNbP3RRjmBeA6/QbreQsewQOfSk1u35YmwFxloqH3w/lPQrY1OD+kySrlGvXA3wupq6qlphGLEWeMC6CEQQKSiWbbQnLdFJazuwRUjSQlRvHDbe7XQTXdMzBZoBcC1Y99Kk4/nKprty2IeBvxPg+NRzg+1e0lkkqUu31oZ/AgdUcD8Db3qFjhXz4QhIZMGFogiJcmo= -e none https://<account_id>.dkr.ecr.us-east-1.amazonaws.com
  
-To login to ECR, copy and paste that output.  That should return something like:
+To login to ECR, copy and paste that output or just run `` `aws ecr get-login --region us-east-1` `` which will tell your shell to execute the output of that command.  That should return something like:
 
     WARNING: login credentials saved in /home/vagrant/.dockercfg.
     Login Succeeded
@@ -127,15 +127,15 @@ Once you've created the ecs-demo-web, repeat the process for a second repository
 
 ##Prepping our Docker images
 
-If you haven't already, pull this repository:
+If you haven't already, clone this repository:
 
-    $ git pull git@github.com:abby-fuller/ecs-demo.git
+    $ git clone git@github.com:abby-fuller/ecs-demo.git
 
 Our first step is the build and test our containers locally.  If you've never worked with Docker before, there are a few basic commands that we'll use in this workshop, but you can find a more thorough list in the [Docker "Getting Started" documentation](https://docs.docker.com/engine/getstarted/).
 
 To start your first container, go to the `web` directory in the project:
 
-    $ cd <path/to/project/ecs-demo/web
+    $ cd <path/to/project>/ecs-demo/web
 
 To build the container:
 
@@ -143,7 +143,7 @@ To build the container:
 
 This should output steps that look something like this:
 
-    vagrant@vagrant:/vagrant/web$ docker build -t ecs-demo-web .
+    $ docker build -t ecs-demo-web .
     Sending build context to Docker daemon 4.096 kB
     Sending build context to Docker daemon 
     Step 0 : FROM ubuntu:latest
@@ -181,7 +181,7 @@ This should return:
 
 To test the api container, repeat the same process from the `/api` directory:
 
-    $ cd <path/to/project/ecs-demo/api 
+    $ cd <path/to/project>/ecs-demo/api 
     $ docker build -t ecs-demo-api .
     $ docker run -d -p 8000:8000 ecs-demo-api
     $ curl localhost:8000/api
@@ -200,10 +200,10 @@ You'll need your push commands that you saw during registry creation.  If you've
 To tag and push the web repository:
 
     $ docker tag ecs-demo-web:latest <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
+    $ docker push <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
 
 This should return something like this:
 
-    docker push <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-web:latest
     The push refers to a repository [<account_id>.ecr.us-east-1.amazonaws.com/ecs-demo-web] (len: 1)
     ec59b8b825de: Image already exists 
     5158f10ac216: Image successfully pushed 
@@ -216,6 +216,7 @@ This should return something like this:
 To tag and push the api repository:
 
     $ docker tag ecs-demo-api:latest <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-api:latest
+    $ docker push <account_id>.dkr.ecr.us-east-1.amazonaws.com/ecs-demo-api:latest
 
 
 Note: why `:latest`?  This is the actual image tag.  In most production environments, you'd tag images for different schemes:  for example, you might tag the most up-to-date image with `:latest`, and all other versions of the same container with a commit SHA from a CI job.  If you push an image without a specific tag, it will default to `:latest`, and untag the previous image with that tag.  For more information on Docker tags, see the Docker [documentation](https://docs.docker.com/engine/getstarted/step_six/). 
@@ -322,7 +323,7 @@ Select the web container, choose **Add to ELB**.
 
 This final step allows you to configure the container with the ALB.  When we created our ALB, we only added a listener for HTTP:80.  Select this from the dropdown as the value for **Listener**.  For **Target Group Name**, enter a value that will make sense to you later, like **ecs-demo-web**.  For **Path Pattern**, the value should be **`/web*`**.  This is the route that we specified in our Python application.
 
-If the values look correct, click **Save** to add your Container.  '
+If the values look correct, click **Save** to add your Container.  
 
 Repeat this process for the API container and task definition.  
 
