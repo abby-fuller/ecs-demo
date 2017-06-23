@@ -17,6 +17,7 @@
 
 
 ##Overview of workshop##
+
 This workshop introduces the basics of working with [ECS](https://aws.amazon.com/ecs/).  This includes:  setting up the initial ECS cluster, and deploying two services, with traffic routed through an [ALB](https://aws.amazon.com/elasticloadbalancing/applicationloadbalancer/).
 
 Prior to beginning the workshop, you'll need to complete a few set up steps: 
