@@ -16,7 +16,8 @@
 * [More in-depth logging with Cloudwatch](https://github.com/abby-fuller/ecs-demo/blob/master/README.md#more-in-depth-logging-with-cloudwatch)
 
 
-##Overview of workshop##
+## Overview of workshop
+
 This workshop introduces the basics of working with [ECS](https://aws.amazon.com/ecs/).  This includes:  setting up the initial ECS cluster, and deploying two services, with traffic routed through an [ALB](https://aws.amazon.com/elasticloadbalancing/applicationloadbalancer/).
 
 Prior to beginning the workshop, you'll need to complete a few set up steps: 
@@ -48,7 +49,7 @@ This should return something like:
 Once you've completed these steps, you're ready to start the workshop!
 
 
-##Setting up the VPC
+## Setting up the VPC
 
 Once you've signed into your AWS account, navigate to the [ECS console](https://console.aws.amazon.com/ecs/home?region=us-east-1#/clusters).  If you've never used ECS before, you can use the [first run wizard](https://console.aws.amazon.com/ecs/home#/firstRun) which will set up your cluster, a dummy service, and a VPC for you.  If you don't want to use the wizard, you can use the [Cloudformation template included in this repo](https://github.com/abby-fuller/ecs-demo/blob/master/ecs-demo-cf.yml), and create a new VPC.
 
@@ -56,7 +57,7 @@ Running the Cloudformation template or the first run wizard should result in som
 
 ![cloudformation output](https://github.com/abby-fuller/ecs-demo/blob/master/images/cloudformation_output.png)
 
-##Setting up your IAM roles
+## Setting up your IAM roles
 
 In order to work with the AWS CLI, you'll need an IAM role with the proper permissions set up.  To do this, we'll create both an IAM Group, and an IAM user.
 
@@ -74,7 +75,7 @@ Name your user something like "**ecs-demo-user**".  From the next step in the wi
 
 When the wizard finishes, make sure to copy or download your access key and secret key.  You'll need them in the next step.
 
-##Configuring the AWS CLI
+## Configuring the AWS CLI
 
 If you've never configured the AWS CLI, the easiest way is by running:
 
@@ -108,7 +109,7 @@ Note:  if you are running Ubuntu, it is possible that you will need to preface y
 If you are unable to login to ECR, check your IAM user group permissions.
 
 
-##Creating the container registries with ECR
+## Creating the container registries with ECR
 
 Before we can build and push our images, we need somewhere to push them to.  In this case, we're going to create two repositories in [ECR](https://aws.amazon.com/ecr/).
 
@@ -125,7 +126,7 @@ Once you've created the repository, it will display the push commands.  Take not
 Once you've created the ecs-demo-web, repeat the process for a second repository.  This one should be named **ecs-demo-api**.  Take note of the push commands for this second repository, also.  Push commands are unique per repository.
 
 
-##Prepping our Docker images
+## Prepping our Docker images
 
 If you haven't already, clone this repository:
 
@@ -191,7 +192,7 @@ The API container should return:
     hi!  i'm ALSO served via Python + Flask.  i'm a second web endpoint.
 
 
-##Pushing our tested images to ECR
+## Pushing our tested images to ECR
 
 Now that we've tested our images locally, we need to tag them again, and push them to ECR.  This will allow us to use them in TaskDefinitions that can be deployed to an ECS cluster.  
 
@@ -233,7 +234,7 @@ You can see your pushed images by viewing the repository in the AWS Console.  Al
         ]
     }
 
-##Creating the ALB
+## Creating the ALB
 
 Now that we've pushed our images, we need an Application Load Balancer (ALB)[https://aws.amazon.com/elasticloadbalancing/applicationloadbalancer/] to route traffic to our endpoints. Compared to a traditional load balancer, an ALB lets you direct traffic between different endpoints.  In our example, we'll use two separate endpoints:  `/web` and `/api`.
 
@@ -271,7 +272,7 @@ Note:  If you created your own security group, and only added a rule for port 80
      All TCP      0-65535       tcp       <id of this security group>
      
 
-##Create your Task Definitions
+## Create your Task Definitions
 
 Before you can register a container to a service, it needs be a part of a Task Definition. Task Definitions define things like environment variables, the container image you wish to use, and the resources you want to allocate to the service (port, memory, CPU).  To create a Task Definition, choose **Task Definitions** from the ECS console menu.  Then, choose **Create a Task Definition**:
 
@@ -301,7 +302,7 @@ Once you've added your log driver, save the Container Definition, and create the
 
 Repeat the Task Definition creation process with the API container, taking care to use the api container image registry, and the correct port (8000) for the **Container Port** option.  For the log driver, make sure the **awslogs-stream-prefix** is **api**.
 
-##Create your Services
+## Create your Services
 
 Navigate back to the ECS console, and choose the cluster that you created during the first run wizard.  This should be named **ecs-demo**.  If you don't have a cluster named **ecs-demo**, create one with the **Create Cluster** option.
 
@@ -327,7 +328,7 @@ If the values look correct, click **Save** to add your Container.
 
 Repeat this process for the API container and task definition.  
 
-##Testing our service deployments from the console and the ALB
+## Testing our service deployments from the console and the ALB
 
 You can see service level events from the ECS console.  This includes deployment events. You can test that both of your services deployed, and registered properly with the ALB by looking at the service's **Events** tab:
 
@@ -342,7 +343,7 @@ We can also test from the ALB itself.  To find the DNS A record for your ALB, na
 You can see that the ALB routes traffic appropriately based on the paths we specified when we registered the containers:  `/web*/` requests go to our web service, and `/api*/` requests go to our API service.
 
 
-##More in-depth logging with Cloudwatch
+## More in-depth logging with Cloudwatch
 
 When we created our Container Definitions, we also added the awslogs driver, which sends logs to [Cloudwatch](https://aws.amazon.com/cloudwatch/).  You can see more details logs for your services by going to the Cloudwatch console, and selecting first our log group:
 
@@ -352,7 +353,7 @@ And then choosing an individual stream:
 
 ![event streams](https://github.com/abby-fuller/ecs-demo/blob/master/images/event_streams.png)
 
-##That's a wrap!
+## That's a wrap!
 
 Congratulations!  You've deployed an ECS Cluster with two working endpoints.  
 
